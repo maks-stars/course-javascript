@@ -15,15 +15,16 @@ const methods = {
 
     if (!photoLikes) {
       photoLikes = new Map();
-      DB.like.set(photoId, photoLikes);
+      DB.likes.set(photoId, photoLikes);
     }
 
     if (photoLikes.get(vkUser.id)) {
       photoLikes.delete(vkUser.id);
-      return {likes:photoLikes.size, liked:false};
+      return { likes: photoLikes.size, liked: false };
     }
+
     photoLikes.set(vkUser.id, true);
-    return {likes: photoLikes.size, liked: true};
+    return { likes: photoLikes.size, liked: true };
   },
   photoStats(req, res, url, vkUser) {
     const photoId = url.searchParams.get('photo');
@@ -31,8 +32,8 @@ const methods = {
     const photoComments = DB.comments.get(photoId);
 
     return {
-      likes:photoLikes?.size ?? 0,
-      liked: photolikes?.has(vkuser.id) ?? false,
+      likes: photoLikes?.size ?? 0,
+      liked: photoLikes?.has(vkUser.id) ?? false,
       comments: photoComments?.length ?? 0,
     };
   },
@@ -40,11 +41,12 @@ const methods = {
     const photoId = url.searchParams.get('photo');
     let photoComments = DB.comments.get(photoId);
 
-    if (!photoComments){
+    if (!photoComments) {
       photoComments = [];
       DB.comments.set(photoId, photoComments);
     }
-    photoComments.unshift({user: vkUser, text: body.text});
+
+    photoComments.unshift({ user: vkUser, text: body.text });
   },
   getComments(req, res, url) {
     const photoId = url.searchParams.get('photo');
@@ -54,19 +56,21 @@ const methods = {
 
 http
   .createServer(async (req, res) => {
-    console.log('➡️ Поступил запрос:', req.method, req.url);
     const token = req.headers['vk_token'];
-    const parsed = new url.URL(req.url, 'http://localhost');
+    const parsed = new url.URL(req.url, 'http://127.0.0.1:5500/projects/loft-photo/layout.html');
     const vkUser = await getMe(token);
     const body = await readBody(req);
-    const method = parsed.searchParams.get('method');
-    const responseData = await methods[method]?.(req, res, parsed, vkUser, body);
+    const responseData = await methods[parsed.searchParams.get('method')]?.(
+      req, 
+      res, 
+      parsed, 
+      vkUser, 
+      body
+    );
 
     res.end(JSON.stringify(responseData ?? null));
   })
-  .listen('8888', () => {
-    console.log('🚀 Сервер запущен');
-  });
+  .listen('5500');
 
 async function readBody(req) {
   if (req.method === 'GET') {
