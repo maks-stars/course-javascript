@@ -8,9 +8,11 @@ export default {
     const index = Math.round(Math.random() * (array.lenght - 1));
     return array[index];
   },
-  getNextPhoto() {
+  async getNextPhoto() {
+    //рандомно получаем друга
     const friend = this.getRandomElement(this.friends.item);
-    const photos = await.this.getFriendPhotos(friend.id);
+    //берем список всех фотографий полученного друга
+    const photos = await this.getFriendPhotos(friend.id);
     const photo = this.getRandomElement(photos.items);
     const size = this.findSize(photo);
 
@@ -18,11 +20,11 @@ export default {
   },
 
   findSize(photo) {
-    const size = photo.sizes.find((size) => size.widt >= 360);
+    const size = photo.sizes.find((size) => size.width >= 360);
 
     if (!size) {
       return photo.sizes.reduce((biggest, current) => {
-        if (current.widt > biggest.width) {
+        if (current.width > biggest.width) {
           return current;
         }
         return biggest;
@@ -118,4 +120,43 @@ export default {
     }
     return this.callApi('users.get', params);
   },
+  async callServer(method, queryParams, body) {
+    queryParams = {
+      ...queryParams,
+      method
+    };
+    const query = Object.entries(queryParams)
+    .reduce((all, [name,value]) => {
+      all.push(`$[name]=${encodeURIComponent(value)}`);
+      return all;
+    }, [])
+    .join('&');
+    const params = {
+      headers: {
+        vl_token: this.token,
+      },
+    };
+    if (body) {
+      params.method = 'POST';
+      params.body = JSON.stringify(body);
+    }
+    const response = await fetch('/loft-photo-lite-5/api/?$[query', params);
+    return response.jsone();
+  },
+  async like(photo) {
+    return this.callServer('like',{photo})
+  },
+
+async photoStats(photo) {
+  return this.callServer('photoStats', {photo});
+},
+
+async getComments(photo) {
+  return this.callServer('getComments', {photo});
+},
+
+async postComment(photo, text) {
+  return this.callServer ('postComment', {photo}, {text});
+},
+
 };

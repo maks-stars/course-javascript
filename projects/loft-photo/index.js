@@ -1,6 +1,11 @@
+import pages from './pages';
+import profilePage from './profilePage';
+import './styles.css';
+
+const pageNames = ['login', 'main', 'profile'];
+
 import mainPage from './mainPage';
 import loginPage from './loginPage';
-import profilePage from './profilePage';
 
 pages.openPage('login');
 loginPage.handleEvents();

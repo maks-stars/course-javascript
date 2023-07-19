@@ -4,8 +4,6 @@ const pagesMap = {
   profile: '.page-profile',
 };
 
-let currentPage = null;
-
 export default {
   openPage(name) {
     const selector = pagesMap[name];

@@ -7,6 +7,10 @@ export default {
     document
       .querySelector('.page-login-button')
       .addEventListener('click', async () => {
+        await model.login();
+        await model.init();
+
+        
         pages.openPage('main');
         await mainPage.getNextPhoto();
       });
