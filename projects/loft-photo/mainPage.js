@@ -61,16 +61,17 @@ export default {
       const { likes, liked } = await model.like(this.photoId);
       this.setLikes(likes, liked);
       });
-      
+
       document
       .querySelector('.component-footer-container-social-comments')
       .addEventListener('click', async () => {
         document.querySelector('.component-comments').classList.remove('hidden');
         await this.loadComments(this.photoId);
       });
-      const input = document.querySelector('.component-comments-container-form-input');
+      const input = document.querySelector('.component -comments-container-form-input');
 
-      document.querySelector('.components-comments').addEventListener('click', (e) =>{
+      document.querySelector('.component-comments')
+      .addEventListener('click', (e) =>{
         if (e.target === e.currentTarget) {
           document.querySelector('.component-comments').classList.add('hidden');
         }
